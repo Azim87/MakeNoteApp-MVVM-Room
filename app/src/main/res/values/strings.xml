@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MakeNotes</string>
+    <string name="note_title">Title</string>
+    <string name="note_description">Description</string>
+    <string name="note_priority">Priority</string>
+    <string name="add_note_title">title</string>
+    <string name="add_note_description">description</string>
+    <string name="choose_note_priority">Choose note priority</string>
+    <string name="save_button">Save</string>
+</resources>
