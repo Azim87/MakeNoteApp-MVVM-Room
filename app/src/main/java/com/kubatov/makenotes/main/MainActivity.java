@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +30,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final int NOTE_REQUEST_CODE = 1;
-    private  Note notesss;
+
 
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
@@ -61,10 +62,27 @@ public class MainActivity extends AppCompatActivity {
         noteAdapter.setNotes(notes);
 
 
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT |
+                         ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                mNoteVM.delete(noteAdapter.getNotePositionAt(viewHolder.getAdapterPosition()));
+                Toast.makeText(MainActivity.this, "Note deleted ", Toast.LENGTH_SHORT).show();
+
+                if (viewHolder.getAdapterPosition() == 0){
+                    Toast.makeText(MainActivity.this, "note is empty", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).attachToRecyclerView(recyclerView);
+
         });
-
         hideFabOnScroll();
-
     }
 
     private void hideFabOnScroll(){
@@ -82,10 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 if (dy > 0 && actionButton.getVisibility() == View.VISIBLE) {
                     actionButton.setVisibility(View.GONE);
                 }
-
                 else if (dy < 0 && actionButton.getVisibility() != View.VISIBLE) {
                     actionButton.setVisibility(View.VISIBLE);
-
                 }
             }
         });
@@ -102,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
             String description = data.getStringExtra(AddNoteActivity.NOTE_DESCRIPTION);
             String priority = data.getStringExtra(AddNoteActivity.NOTE_PRIORITY);
 
-             notesss = new Note(title, description, priority);
-            mNoteVM.insert(notesss);
+            Note note = new Note(title, description, priority);
+            mNoteVM.insert(note);
 
             Toast.makeText(this, "Note saved!", Toast.LENGTH_SHORT).show();
 
@@ -126,17 +142,13 @@ public class MainActivity extends AppCompatActivity {
                 clearAllNotes();
                 return true;
             default:
-                 return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
     private void clearAllNotes() {
-        if (notesss != null){
             mNoteVM.deleteAllNotes();
             Toast.makeText(this, "notes are deleted", Toast.LENGTH_SHORT).show();
             return;
-        }
-
-
     }
 }

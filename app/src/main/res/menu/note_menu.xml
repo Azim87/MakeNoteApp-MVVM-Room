@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/clear_notes"
-        android:title="Clear all notes"
+        android:title="Delete all notes"
         android:icon="@drawable/ic_clear_all_notes_blue"
         app:showAsAction="withText"/>
 
