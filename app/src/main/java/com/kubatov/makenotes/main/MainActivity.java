@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,22 +15,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kubatov.makenotes.NoteViewModel.NoteVM;
 import com.kubatov.makenotes.R;
 import com.kubatov.makenotes.activities.AddEditNoteActivity;
 import com.kubatov.makenotes.adapters.NoteAdapter;
 import com.kubatov.makenotes.model.Note;
-
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final int ADD_REQUEST_CODE = 1;
     public static final int EDIT_REQUEST_CODE = 2;
 
-    private NoteAdapter noteAdapter;
     private RecyclerView recyclerView;
     private FloatingActionButton actionButton;
     private NoteVM mNoteVM;
@@ -44,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.note_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-        noteAdapter = new NoteAdapter();
+        final NoteAdapter noteAdapter = new NoteAdapter();
         recyclerView.setAdapter(noteAdapter);
 
         actionButton = findViewById(R.id.add_note_fab);
@@ -55,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         mNoteVM = ViewModelProviders.of(MainActivity.this).get(NoteVM.class);
         mNoteVM.getAllNotes().observe(this, (List<Note> notes) -> {
-            noteAdapter.setNotes(notes);
+            noteAdapter.submitList(notes);
 
 
             new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -70,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     mNoteVM.delete(noteAdapter.getNotePositionAt(viewHolder.getAdapterPosition()));
                     Toast.makeText(MainActivity.this, "Note deleted ", Toast.LENGTH_SHORT).show();
-
-                    if (viewHolder.getAdapterPosition() == 0) {
-                        Toast.makeText(MainActivity.this, "note is empty", Toast.LENGTH_SHORT).show();
-                    }
                 }
             }).attachToRecyclerView(recyclerView);
 
