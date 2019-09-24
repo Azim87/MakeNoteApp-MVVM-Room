@@ -19,7 +19,7 @@
             android:ellipsize="marquee"
             android:text="@string/note_priority"
             android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textStyle="italic" />
 
         <TextView
@@ -31,7 +31,8 @@
             android:ellipsize="marquee"
             android:singleLine="true"
             android:text="@string/note_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
         <TextView
             android:id="@+id/note_description"

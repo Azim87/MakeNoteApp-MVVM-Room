@@ -4,14 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.kubatov.makenotes.R;
 import com.kubatov.makenotes.model.Note;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
@@ -56,16 +56,14 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView titleTv;
-        public TextView priorityTv;
-        public TextView descriptionTv;
+        @BindView(R.id.note_title) public TextView titleTv;
+        @BindView(R.id.note_priority) public TextView priorityTv;
+        @BindView(R.id.note_description) public TextView descriptionTv;
 
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
-            titleTv = itemView.findViewById(R.id.note_title);
-            priorityTv = itemView.findViewById(R.id.note_priority);
-            descriptionTv = itemView.findViewById(R.id.note_description);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
