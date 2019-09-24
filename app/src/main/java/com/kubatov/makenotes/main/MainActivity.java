@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kubatov.makenotes.Constants;
 import com.kubatov.makenotes.NoteViewModel.NoteVM;
@@ -22,10 +21,10 @@ import com.kubatov.makenotes.R;
 import com.kubatov.makenotes.activities.AddEditNoteActivity;
 import com.kubatov.makenotes.adapters.NoteAdapter;
 import com.kubatov.makenotes.model.Note;
+import com.kubatov.makenotes.util.Toaster;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.kubatov.makenotes.Constants.NOTE_DESCRIPTION;
 import static com.kubatov.makenotes.Constants.NOTE_ID;
 import static com.kubatov.makenotes.Constants.NOTE_PRIORITY;
@@ -63,14 +62,16 @@ public class MainActivity extends AppCompatActivity {
                     ItemTouchHelper.LEFT |
                             ItemTouchHelper.RIGHT) {
                 @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                public boolean onMove(@NonNull RecyclerView recyclerView,
+                                      @NonNull RecyclerView.ViewHolder viewHolder,
+                                      @NonNull RecyclerView.ViewHolder target) {
                     return false;
                 }
 
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     mNoteViewModel.delete(noteAdapter.getNotePositionAt(viewHolder.getAdapterPosition()));
-                    Toast.makeText(MainActivity.this, "Note deleted ", Toast.LENGTH_SHORT).show();
+                    Toaster.showMessage("Note deleted ");
                 }
             }).attachToRecyclerView(recyclerView);
 
@@ -100,12 +101,13 @@ public class MainActivity extends AppCompatActivity {
             Note note = new Note(title, description, priority);
             mNoteViewModel.insert(note);
 
-            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
+            Toaster.showMessage("Note is saved");
+
         } else if (requestCode == Constants.EDIT_REQUEST_CODE && resultCode == RESULT_OK) {
             int id = data.getIntExtra(NOTE_ID, -1);
 
             if (id == -1) {
-                Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show();
+                Toaster.showMessage("Note can't be updated");
                 return; }
 
             String title = data.getStringExtra(NOTE_TITLE);
@@ -115,9 +117,12 @@ public class MainActivity extends AppCompatActivity {
             Note note = new Note(title, description, priority);
             note.setId(id);
             mNoteViewModel.update(note);
-            Toast.makeText(this, "note updated", Toast.LENGTH_SHORT).show();
+
+            Toaster.showMessage("Updated");
+
         } else {
-            Toast.makeText(this, "Note not saved!", Toast.LENGTH_SHORT).show();
+            Toaster.showMessage("not saved");
+
         }
     }
 
@@ -162,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void clearAllNotes() {
         mNoteViewModel.deleteAllNotes();
-        Toast.makeText(this, "notes are deleted", Toast.LENGTH_SHORT).show();
+        Toaster.showMessage("All noted deleted");
         return;
     }
 }
