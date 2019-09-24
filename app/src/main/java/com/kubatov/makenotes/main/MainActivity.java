@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.add_note_fab) FloatingActionButton actionButton;
 
     private NoteVM mNoteViewModel;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,4 +172,19 @@ public class MainActivity extends AppCompatActivity {
         Toaster.showMessage("All noted deleted");
         return;
     }
+
+    //region onBackPressed
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toaster.showMessage("Press again to exit.");
+
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+    }
+    //endregion
 }
