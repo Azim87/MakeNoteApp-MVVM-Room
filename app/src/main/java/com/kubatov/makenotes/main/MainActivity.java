@@ -141,8 +141,20 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (dy > 0 && actionButton.getVisibility() == View.VISIBLE) {
-                    actionButton.setVisibility(View.GONE);
+
+
+
+                    new Handler().postDelayed(() -> {
+                        actionButton.setVisibility(View.GONE);
+                    },100);
+
+
                 } else if (dy < 0 && actionButton.getVisibility() != View.VISIBLE) {
+
+                    new Handler().postDelayed(() -> {
+                        actionButton.setVisibility(View.VISIBLE);
+                    },300);
+
                     actionButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -184,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         this.doubleBackToExitPressedOnce = true;
         Toaster.showMessage("Press again to exit.");
 
-        new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
     //endregion
 }
