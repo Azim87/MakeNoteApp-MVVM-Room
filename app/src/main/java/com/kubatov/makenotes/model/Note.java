@@ -13,13 +13,13 @@ public class Note {
 
     private String description;
 
-    private String priority;
+    private int priority;
 
 
     //region Constructor
     public Note(String title,
                 String description,
-                String priority) {
+                int priority) {
 
         this.title = title;
         this.description = description;
@@ -52,11 +52,11 @@ public class Note {
         this.description = description;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
     //endregion

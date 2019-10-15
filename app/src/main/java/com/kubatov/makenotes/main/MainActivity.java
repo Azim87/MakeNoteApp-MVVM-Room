@@ -3,6 +3,7 @@ package com.kubatov.makenotes.main;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.kubatov.makenotes.App;
 import com.kubatov.makenotes.Constants;
 import com.kubatov.makenotes.NoteViewModel.NoteVM;
 import com.kubatov.makenotes.R;
@@ -23,6 +25,8 @@ import com.kubatov.makenotes.activities.AddEditNoteActivity;
 import com.kubatov.makenotes.adapters.NoteAdapter;
 import com.kubatov.makenotes.model.Note;
 import com.kubatov.makenotes.util.Toaster;
+
+import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.note_recycler_view) RecyclerView recyclerView;
     @BindView(R.id.add_note_fab) FloatingActionButton actionButton;
 
+
+
+    private NoteAdapter noteAdapter;
+
     private NoteVM mNoteViewModel;
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -46,9 +54,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-        final NoteAdapter noteAdapter = new NoteAdapter();
+        noteAdapter = new NoteAdapter();
         recyclerView.setAdapter(noteAdapter);
 
         actionButton.setOnClickListener(v -> {
@@ -57,40 +66,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mNoteViewModel = ViewModelProviders.of(MainActivity.this).get(NoteVM.class);
-        mNoteViewModel.getAllNotes().observe(this, (List<Note> notes) -> {
-            noteAdapter.submitList(notes);
-
-            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                    ItemTouchHelper.LEFT |
-                            ItemTouchHelper.RIGHT) {
-                @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView,
-                                      @NonNull RecyclerView.ViewHolder viewHolder,
-                                      @NonNull RecyclerView.ViewHolder target) {
-                    return false;
-                }
-
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    mNoteViewModel.delete(noteAdapter.getNotePositionAt(viewHolder.getAdapterPosition()));
-                    Toaster.showMessage("Note deleted ");
-                }
-            }).attachToRecyclerView(recyclerView);
-
-            noteAdapter.setOnItemClickListener(note -> {
-                Intent intent = new Intent(MainActivity.this, AddEditNoteActivity.class);
-                intent.putExtra(NOTE_ID, note.getId());
-                intent.putExtra(NOTE_TITLE, note.getTitle());
-                intent.putExtra(NOTE_DESCRIPTION, note.getDescription());
-                intent.putExtra(NOTE_PRIORITY, note.getPriority());
-                startActivityForResult(intent, Constants.EDIT_REQUEST_CODE);
-            });
-
-        });
+        mNoteViewModel.getAllNotes().observe(this, this::onChanged);
         hideFabOnScroll();
     }
-
-    /**/
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -98,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == Constants.ADD_REQUEST_CODE && resultCode == RESULT_OK) {
             String title = data.getStringExtra(NOTE_TITLE);
             String description = data.getStringExtra(NOTE_DESCRIPTION);
-            String priority = data.getStringExtra(NOTE_PRIORITY);
+            int priority = data.getIntExtra(NOTE_PRIORITY, 0);
 
             Note note = new Note(title, description, priority);
             mNoteViewModel.insert(note);
@@ -114,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
             String title = data.getStringExtra(NOTE_TITLE);
             String description = data.getStringExtra(NOTE_DESCRIPTION);
-            String priority = data.getStringExtra(NOTE_PRIORITY);
+            int priority = data.getIntExtra(NOTE_PRIORITY,0);
 
             Note note = new Note(title, description, priority);
             note.setId(id);
@@ -141,20 +120,15 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (dy > 0 && actionButton.getVisibility() == View.VISIBLE) {
-
-
-
                     new Handler().postDelayed(() -> {
                         actionButton.setVisibility(View.GONE);
                     },100);
 
 
                 } else if (dy < 0 && actionButton.getVisibility() != View.VISIBLE) {
-
                     new Handler().postDelayed(() -> {
                         actionButton.setVisibility(View.VISIBLE);
                     },300);
-
                     actionButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -168,12 +142,15 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean sort;
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.clear_notes:
                 clearAllNotes();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -197,6 +174,36 @@ public class MainActivity extends AppCompatActivity {
         Toaster.showMessage("Press again to exit.");
 
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+    }
+
+    private void onChanged(List<Note> notes) {
+        noteAdapter.submitList(notes);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT |
+                        ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                mNoteViewModel.delete(noteAdapter.getNotePositionAt(viewHolder.getAdapterPosition()));
+                Toaster.showMessage("Note deleted ");
+            }
+        }).attachToRecyclerView(recyclerView);
+
+        noteAdapter.setOnItemClickListener(note -> {
+            Intent intent = new Intent(MainActivity.this, AddEditNoteActivity.class);
+            intent.putExtra(NOTE_ID, note.getId());
+            intent.putExtra(NOTE_TITLE, note.getTitle());
+            intent.putExtra(NOTE_DESCRIPTION, note.getDescription());
+            intent.putExtra(NOTE_PRIORITY, note.getPriority());
+            startActivityForResult(intent, Constants.EDIT_REQUEST_CODE);
+        });
     }
     //endregion
 }

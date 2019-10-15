@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.kubatov.makenotes.dao.NoteDao;
 import com.kubatov.makenotes.model.Note;
 
-@Database(entities = Note.class, version = 1, exportSchema = false)
+@Database(entities = Note.class, version = 2)
 
 public abstract class NoteDB extends RoomDatabase {
 

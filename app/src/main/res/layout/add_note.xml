@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#F7F1CD"
+    android:background="#00695C"
     android:padding="16dp"
     tools:context=".activities.AddEditNoteActivity">
 

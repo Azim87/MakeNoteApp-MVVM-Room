@@ -6,6 +6,6 @@
         android:id="@+id/clear_notes"
         android:title="Delete all notes"
         android:icon="@drawable/ic_clear_all_notes_blue"
-        app:showAsAction="withText"/>
+        app:showAsAction="always"/>
 
 </menu>

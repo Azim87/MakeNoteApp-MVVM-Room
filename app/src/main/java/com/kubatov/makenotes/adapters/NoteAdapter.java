@@ -5,17 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.kubatov.makenotes.R;
 import com.kubatov.makenotes.model.Note;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.kubatov.makenotes.Constants.OVER_URGENT;
+import static com.kubatov.makenotes.Constants.URGENT;
+import static com.kubatov.makenotes.Constants.VERY_URGENT;
 
 
 public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
@@ -33,10 +34,9 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
         @Override
         public boolean areContentsTheSame(@NonNull Note oldItem, @NonNull Note newItem) {
-            return
-                    oldItem.getDescription().equals(newItem.getDescription()) &&
+            return oldItem.getDescription().equals(newItem.getDescription()) &&
                             oldItem.getTitle().equals(newItem.getTitle()) &&
-                            oldItem.getPriority().equals(newItem.getPriority());
+                            oldItem.getPriority() == newItem.getPriority();
         }
     };
 
@@ -49,23 +49,25 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-
-
         Note holderNote = getItem(position);
         holder.titleTv.setText(holderNote.getTitle());
         holder.descriptionTv.setText(holderNote.getDescription());
-        holder.priorityTv.setText(holderNote.getPriority());
+        holder.priorityTv.setText(String.valueOf(holderNote.getPriority()));
 
         switch (holderNote.getPriority()) {
-            case "Urgent":
-                holder.priorityTv.setTextColor(Color.BLUE);
-                return;
-            case "Very urgent":
-                holder.priorityTv.setTextColor(Color.RED);
-                return;
-            case "Over urgent":
+            case 0:
+                holder.priorityTv.setText("Urgent");
                 holder.priorityTv.setTextColor(Color.MAGENTA);
                 return;
+            case 1:
+                holder.priorityTv.setText("Very urgent");
+                holder.priorityTv.setTextColor(Color.GREEN);
+                return;
+            case 2:
+                holder.priorityTv.setText("Over urgent");
+                holder.priorityTv.setTextColor(Color.RED);
+                return;
+
             default:
                 holder.priorityTv.setTextColor(Color.BLACK);
         }
@@ -88,13 +90,10 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (mListener != null && position != RecyclerView.NO_POSITION) {
-                        mListener.onItemClick(getItem(position));
-                    }
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (mListener != null && position != RecyclerView.NO_POSITION) {
+                    mListener.onItemClick(getItem(position));
                 }
             });
         }
