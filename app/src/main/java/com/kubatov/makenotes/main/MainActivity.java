@@ -1,13 +1,5 @@
 package com.kubatov.makenotes.main;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +8,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.kubatov.makenotes.App;
 import com.kubatov.makenotes.Constants;
 import com.kubatov.makenotes.NoteViewModel.NoteVM;
 import com.kubatov.makenotes.R;
@@ -25,8 +23,6 @@ import com.kubatov.makenotes.activities.AddEditNoteActivity;
 import com.kubatov.makenotes.adapters.NoteAdapter;
 import com.kubatov.makenotes.model.Note;
 import com.kubatov.makenotes.util.Toaster;
-
-import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,11 +33,8 @@ import static com.kubatov.makenotes.Constants.NOTE_TITLE;
 
 public class MainActivity extends AppCompatActivity {
 
-
     @BindView(R.id.note_recycler_view) RecyclerView recyclerView;
     @BindView(R.id.add_note_fab) FloatingActionButton actionButton;
-
-
 
     private NoteAdapter noteAdapter;
 
@@ -181,7 +174,9 @@ public class MainActivity extends AppCompatActivity {
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT |
-                        ItemTouchHelper.RIGHT) {
+                         ItemTouchHelper.RIGHT |
+                         ItemTouchHelper.UP |
+                         ItemTouchHelper.DOWN) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,

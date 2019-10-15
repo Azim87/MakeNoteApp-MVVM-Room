@@ -14,10 +14,6 @@ import com.kubatov.makenotes.model.Note;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.kubatov.makenotes.Constants.OVER_URGENT;
-import static com.kubatov.makenotes.Constants.URGENT;
-import static com.kubatov.makenotes.Constants.VERY_URGENT;
-
 
 public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
     OnItemClickListener mListener;
